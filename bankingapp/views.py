@@ -1,5 +1,4 @@
 from django.shortcuts import render,redirect
-from .forms import AccountForm
 from .models import Branch, District
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -16,13 +15,13 @@ def register(request):
         password =  request.POST['password']
         confirmpassword =  request.POST['confirmpassword']
         if password != confirmpassword:
-                messages.error(request, 'Passwords do not match.')
-                return redirect('register')
+            messages.error(request, 'Passwords do not match.')
+            return redirect('register')
             
             # Check if the username is already taken
         if User.objects.filter(username=username).exists():
-                messages.error(request, 'Username is already taken.')
-                return redirect('register')
+            messages.error(request, 'Username is already taken.')
+            return redirect('register')
 
         else:
             user=User.objects.create_user(username=username,password=password)
@@ -42,18 +41,27 @@ def login(request):
         else:
             error_message='invalid credentials'
     return render(request,'login.html',{'error_message':error_message})
+    
 def services(request):
-    if request.method == 'POST':
-        form = AccountForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # success message
-            messages.success(request, 'Application accepted')
-            # Redirect to index page after successful form submission
-            return redirect('index')
+    if request.method=='POST':
+        name = request.POST.get('name')
+        dob = request.POST.get('dob')
+        age = request.POST.get('age')
+        gender = request.POST.get('gender')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        district = request.POST.get('district')
+        branch = request.POST.get('branch')
+        account_type = request.POST.get('accountType')
+        materials_provided = request.POST.getlist('materials')
+         # Display success message
+        messages.success(request, 'Application accepted')
+        
+        # Redirect to index page after successful form submission
+        return redirect('index')
     else:
-        form = AccountForm()
-    return render(request, 'services.html', {'form': form})
+        return render(request, 'services.html')
 
 def team(request):
     return render(request, 'team.html')
